@@ -1,0 +1,272 @@
+/* setting of the whole website,eg. background color/ */
+#tindog-homepage, #cta {
+  background-color: #ff4c68;
+}
+
+#testimonials, #press {
+  background-color: #ef8172;
+  text-align: center;
+}
+
+h1, h2, h3, p {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.button {
+  margin: 8% auto 15% auto; /*两个button四周的距离,应用于整个界面的，出现了两次*/
+}
+
+
+
+/* (start) setting of tindog-homepage section,container-fluid是填充满整个屏幕 */
+.container-fluid{
+  padding: 0 15%;
+}
+/* setting of navbar part of tindog-homepage */
+.navbar-brand {   /*tindog*/
+  font-family: ubuntu;
+  font-size: 40px;
+  font-weight: 500;
+}
+
+nav {            /*整个nav条*/
+  margin-bottom: 8%;
+}
+
+.nav-item {         /* nav-item是contact/pricing/download的外框*/
+  padding: 0 25px;
+}
+
+.nav-link {
+  font-size: 1.2rem;
+  font-family: 'Montserrat';
+}
+
+
+h1 {
+  font-size: 3rem;
+  line-height: 1.5;
+  color: white;
+}
+
+
+.download-button {
+  margin: 5% 3% 5% auto;
+}
+
+.title-image {
+  width: 60%;
+  transform: rotate(25deg);
+  position: relative;
+  left: 80px;
+}
+/* (end) setting of tindog-homepage section */
+
+
+
+
+/* starting of Feature-page */
+.features-h3 {
+  font-weight: 800;
+}
+
+.section2-icon {   /*从apple font上下载的icon用font-size修改大小*/
+  font-size: 5rem;
+  color: #ef8172;
+  margin: 8% auto 8% auto;
+}
+
+.section2-icon:hover {
+  color: #ff4c68;
+}
+
+.section2-p {
+  font-weight: 500;
+  color: #8f8f8f;
+  margin: 8% auto 8%;
+  width: 70%;
+}
+
+#features {
+  padding: 15% 10% 15%;
+  text-align: center;
+  background-color: white;
+  position: relative;
+  z-index: 1;
+}
+/* end of Feature-page */
+
+
+
+/* starting of Testimonials-page */
+#testimonials {
+  padding: 8% 10% 8%;
+  color: white;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 2rem;
+  width: 60%;
+  margin: auto;
+  line-height: 2;
+}
+
+.testimonials-image {
+  width: 15%;
+  border-radius: 100%;
+  margin: 20px;
+}
+
+#press {
+  padding-bottom: 8%;
+}
+
+.press-logo {
+  width: 13%;
+  margin: 20px;
+}
+/* end of Feature-page */
+
+
+
+/* starting of Pricing-page */
+#pricing {
+  text-align: center;
+  margin: 150px 5% 150px;
+}
+
+.row {
+  margin-top: 50px
+}
+
+.pricing-h2 {
+  font-weight: 600;
+  font-size: 3rem;
+  width: 70%;
+  margin: auto;
+  line-height: 2;
+}
+
+.pricing-p {
+  font-weight: 500;
+  color: #8f8f8f;
+  width: 70%;
+  text-align: center;
+  margin: auto;
+}
+
+.card {
+  width: 90%;
+  position: relative;
+  left: 45px;
+}
+/* end of Testimonials-page */
+
+
+
+
+.cta-h3 {
+  font-family: 'Montserrat';
+  font-weight: 800;
+  color: white;
+  font-size: 3rem;
+}
+
+#cta {
+  text-align: center;
+  padding: 10%;
+}
+
+#footer {
+  background-color: white;
+  color: #8f8f8f;
+  font-family: 'Montserrat';
+  text-align: center;
+  padding: 5%;
+}
+
+.footer-icon {
+  margin: 20px 8px;
+  color: black;
+  opacity: 0.8;
+}
+
+.footer-icon1 {
+  margin: 20px 12px;
+  color: black;
+  opacity: 0.8;
+  position: relative;
+  top: 0.5px;
+}
+
+@media (max-width: 572px) {
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    line-height: 1.5;
+    color: white;
+    width: 110%;
+  }
+
+  .cta-h3 {
+    font-family: 'Montserrat';
+    font-weight: 800;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  #cta {
+    background-color: #ff4c68;
+    text-align: center;
+    padding: 12% auto;
+    margin-top: 10px;
+  }
+
+  .title-image {
+    width: 60%;
+    position: relative;
+    transform: rotate(20);
+  }
+
+  h2 {
+    padding-top: 50px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    font-size: 1rem;
+    width: 70%;
+    margin: auto;
+    line-height: 2;
+  }
+
+  .pricing-h2 {
+    font-family: 'Montserrat';
+    font-weight: 600;
+    font-size: 2rem;
+    width: 90%;
+    margin: auto;
+    line-height: 2;
+  }
+
+  #pricing {
+    text-align: center;
+    margin: 0 5% 150px;
+  }
+
+  #press {
+    background-color: #ef8172;
+    text-align: center;
+    padding-bottom: 15%;
+  }
+}
+
+  @media (max-width: 1034px) and (min-width: 769px) {
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2rem;
+      line-height: 1.5;
+      color: white;
+      width: 110%;
+
+    }
+  }
