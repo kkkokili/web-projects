@@ -1,0 +1,22 @@
+body {
+  background-image: url("/background/5333978.jpg");
+  text-align: center;
+}
+
+
+h1 {
+  font-family: serif;
+  font-size: 5.5rem;
+  margin-bottom: 3%;
+  font-weight: 600;
+  color: #3A6351;
+}
+
+input {
+  margin-left: 2%;
+  margin-bottom: 10%;
+}
+
+section {
+  margin-top: 12%;
+}
