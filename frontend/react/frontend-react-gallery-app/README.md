@@ -1,6 +1,8 @@
-
 # React Gallery App
-#### React Gallery App: Project Overview
+
+[Check Out the App Here](https://distracted-brattain-784cbd.netlify.app/waterfall)
+
+#### Project Overview
 The React gallery app is an image gallery app built in a modular fashion to display 24 images
 in a page using Axios to fetch data from the Flickr API. <br />
 The gallery app has a search component to display searched images, and the searched text is added to the route. <br />
@@ -14,8 +16,6 @@ There are 3 default displayed topics that are already setup using React Router.
 ```
  REACT_APP_API_KEY = ''
 ```
-- Check out my article on creating and using a working `.env` in react [here](https://moxiedev.hashnode.dev/a-checklist-to-a-working-env-in-react)
-- Now you should be able to run the project.
 - To start the project `npm start`
 - To build for production `npm run build`. 
 - Consequently, you can access these actions of starting and building the project in the `package.json`.
