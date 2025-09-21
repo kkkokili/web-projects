@@ -1,5 +1,5 @@
 // jshint esversion:8
-import {Weather_API_KEY} from "apikey.js";
+import { Weather_API_KEY } from 'apikey.js';
 const express = require('express');
 const app = express();
 
@@ -8,28 +8,30 @@ const app = express();
 const https = require('https');
 
 // 出现一个bug, ***urlencoded打成了urlendcoded
-app.use(express.urlencoded({
-  entended: true
-}));
+app.use(
+  express.urlencoded({
+    entended: true,
+  }),
+);
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/style.css', (req, res) => {
-  res.sendFile(__dirname + "/style.css");
+  res.sendFile(__dirname + '/style.css');
 });
 
 app.get('/style1.css', (req, res) => {
-  res.sendFile(__dirname + "/style1.css");
+  res.sendFile(__dirname + '/style1.css');
 });
 
 app.get('/background/background.jpg', (req, res) => {
-  res.sendFile(__dirname + "/background/background.jpg");
+  res.sendFile(__dirname + '/background/background.jpg');
 });
 
 app.get('/icon/icon.png', (req, res) => {
-  res.sendFile(__dirname+'/icon/icon.png');
+  res.sendFile(__dirname + '/icon/icon.png');
 });
 
 app.post('/', (req, res) => {
@@ -45,7 +47,7 @@ app.post('/', (req, res) => {
   https.get(url, (response) => {
     console.log(response.statusCode);
     // The returned data below is in hexadecimal
-    response.on("data", (data) => {
+    response.on('data', (data) => {
       // JSON.parse() will turn json in string format, hexadecimal, binary or text into actual js object
       const weatherData = JSON.parse(data);
       const location = weatherData.timezone;
@@ -55,25 +57,28 @@ app.post('/', (req, res) => {
       const feelsLike = weatherData.current.feels_like;
       const currentWeather = weatherData.current.weather[0].main.toUpperCase();
       const icon = weatherData.current.weather[0].icon;
-      const iconURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
+      const iconURL = 'http://openweathermap.org/img/wn/' + icon + '@2x.png';
 
       // Daily data
-      const operation = weatherData.daily.map(item => {
+      const operation = weatherData.daily.map((item) => {
         array.push({
           // item.dt是一串奇怪的ID数字，看了API的介绍google了下用以下方式转为中式的日期计数>>年/月/日
-          "Date": new Date(item.dt * 1000).toLocaleDateString("zh-cn"),
-          "DailyTemperature": item.temp.day + "℃",
-          "NightTemperature": item.temp.night + "℃",
-          "Description": item.weather[0].description,
-          "Icon": "http://openweathermap.org/img/wn/" + item.weather[0].icon + "@2x.png",
-          "Humidity": item.humidity,
-          "UVI": item.uvi
+          Date: new Date(item.dt * 1000).toLocaleDateString('zh-cn'),
+          DailyTemperature: item.temp.day + '℃',
+          NightTemperature: item.temp.night + '℃',
+          Description: item.weather[0].description,
+          Icon:
+            'http://openweathermap.org/img/wn/' +
+            item.weather[0].icon +
+            '@2x.png',
+          Humidity: item.humidity,
+          UVI: item.uvi,
         });
       });
 
-// 以下time是获取的现在计算机上显示的时间
+      // 以下time是获取的现在计算机上显示的时间
       var today = new Date();
-      var time = today.getHours()+':'+today.getMinutes();
+      var time = today.getHours() + ':' + today.getMinutes();
       console.log(time);
 
       // response user back with the parsed data
@@ -124,14 +129,10 @@ app.post('/', (req, res) => {
                </div>
                </body>`;
       res.send(html);
-
-
     });
-
   });
 });
 
-
-app.listen(process.env.PORT|| 3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log('Port 3000 starts to listen!');
 });

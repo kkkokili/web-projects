@@ -1,27 +1,26 @@
 // jshint esversion:7
-const express=require('express');
+const express = require('express');
 
-const app=express();
+const app = express();
 
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/bmicalculator', (req, res)=> {
-  res.sendFile(__dirname+"/bmiCalculator.html");
+app.get('/bmicalculator', (req, res) => {
+  res.sendFile(__dirname + '/bmiCalculator.html');
 });
 
 app.get('/style.css', (req, res) => {
-  res.sendFile(__dirname+"/style.css");
+  res.sendFile(__dirname + '/style.css');
 });
 
-app.get("/background/5333978.jpg", (req, res) => {
-  res.sendFile(__dirname+'/background/5333978.jpg');
+app.get('/background/5333978.jpg', (req, res) => {
+  res.sendFile(__dirname + '/background/5333978.jpg');
 });
 
-
-app.post('/bmicalculator', (req, res)=> {
-  let weight=Number(req.body.weight);
-  let height=Number(req.body.height);
-  let BMI = weight/(height**2);
+app.post('/bmicalculator', (req, res) => {
+  let weight = Number(req.body.weight);
+  let height = Number(req.body.height);
+  let BMI = weight / height ** 2;
   res.send(`<body style="text-align: center;
                          margin-top: 15%;
                          background-image: url(/background/5333978.jpg);
@@ -36,8 +35,8 @@ app.post('/bmicalculator', (req, res)=> {
             <h3>Overweight = 25–29.9</h3>
             <h3>Obesity = BMI of 30 or greater</h3>
             </body> `);
-    });
+});
 
-app.listen(3000, ()=> {
-  console.log('The port now starts to listen!');
+app.listen(3000, () => {
+  console.log('The port now starts to listen on 3000!');
 });
