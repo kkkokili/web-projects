@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      img {
+        width: 700px;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="imgs/1.jpg" alt="picture" srcset="" />
+    <div id="demo">
+      <!-- <p>Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!</p> -->
+    </div>
+    <script>
+      const idealVPwidth = screen.width
+      const layoutViewport = document.documentElement.clientWidth
+      const a = document.createElement('h1')
+      a.innerHTML = `理想视口宽度是${idealVPwidth}`
+      document.body.appendChild(a)
+      const b = document.createElement('h1')
+      b.innerHTML = `布局视口宽度是${layoutViewport}`
+      document.body.appendChild(b)
+    </script>
+  </body>
+</html>
