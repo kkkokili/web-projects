@@ -1,0 +1,27 @@
+<%- include('partials/header'); -%>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <h1 class="fixTitle"><%= homeTitle %></h1>
+    </div>
+    <div class="col-md-4">
+      <button class="btn btn-default home-btn" type="submit" name="compose"><a href="/compose">+ compose</a></button>
+    </div>
+  </div>
+
+</div>
+<p class="fixPost"><%= homePost %></p>
+
+
+
+<% postList.forEach(item => { %>
+<div class="singlePost">
+  <h1 class="postTitle"><%= item.title %></h1>
+  <p><%= item.post.substring(0,50)+'...' %><a href="/posts/<%= item.title %>">Read More</a></p>
+</div>
+<%  }); %>
+
+
+
+<%- include('partials/footer'); -%>
