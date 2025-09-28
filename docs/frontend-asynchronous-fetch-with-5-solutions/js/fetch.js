@@ -1,7 +1,6 @@
 // jshint esversion:6
-const astroUrl =
-  ' https://cors-anywhere.herokuapp.com/http://api.open-notify.org/astros.json';
-const wikiUrl = 'https://en.wikipedia.org/api/rest_v1/page/summary/';
+const ASTRO_LOCAL = './data/astros.json';
+const WIKI_SUMMARY = 'https://en.wikipedia.org/api/rest_v1/page/summary/';
 const peopleList = document.getElementById('people');
 const btn = document.querySelector('button');
 
