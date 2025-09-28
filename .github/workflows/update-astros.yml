@@ -2,58 +2,36 @@ name: Update astros.json
 
 on:
   schedule:
-    - cron: "0 */6 * * *"   # 每6小时运行一次（UTC 时间）
-  workflow_dispatch:         # 允许手动触发
+    - cron: '0 */6 * * *' # 每6小时运行一次（UTC）
+  workflow_dispatch: # 允许手动触发
 
 permissions:
-  contents: write            # 允许推送代码
+  contents: write # 允许推送代码
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    concurrency:
-      group: update-astros
-      cancel-in-progress: true
 
     steps:
-      - name: Checkout current branch
+      - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          # 如果你的默认分支就是 gh-pages，可以不写。若需要固定分支，在这里加：
-          # ref: gh-pages
-          persist-credentials: true
 
-      - name: Create target folder
+      - name: Ensure target folder exists
         run: |
           mkdir -p docs/frontend-asynchronous-fetch-with-5-solutions/data
 
-      - name: Fetch remote astros (HTTP allowed in Actions)
+      - name: Install jq (if missing)
         run: |
-          set -e
-          curl -sL "http://api.open-notify.org/astros.json" -o docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.tmp.json
-          # 基本合法性校验：必须包含 "people" 字段
-          cat docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.tmp.json | python3 - <<'PY'
-import sys, json
-data = json.load(sys.stdin)
-assert 'people' in data and isinstance(data['people'], list)
-print(json.dumps(data, ensure_ascii=False, indent=2))
-PY
-          > docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.json <<'EOF'
-$(cat docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.tmp.json | python3 - <<'PY'
-import sys, json
-data = json.load(sys.stdin)
-print(json.dumps(data, ensure_ascii=False, indent=2))
-PY
-)
-EOF
-          rm docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.tmp.json
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
 
-      - name: Commit & push if changed
+      - name: Fetch remote astros and validate
         run: |
           set -e
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.json
-          git diff --staged --quiet && echo "No changes." && exit 0
-          git commit -m "chore: update astros.json (automated)"
-          git push
+          curl -sL "http://api.open-notify.org/astros.json" -o astros.tmp.json
+          # 校验：必须包含 people 且为数组
+          jq -e '.people | arrays' astros.tmp.json >/dev/null
+          # 格式化写入到 Pages 路径
+          jq . astros.tmp.json > docs/fr
