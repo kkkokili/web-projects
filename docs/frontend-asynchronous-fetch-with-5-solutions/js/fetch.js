@@ -1,9 +1,6 @@
 // jshint esversion:6
-// ✅ 用 HTTPS 代理避免 mixed content（任选其一）
 const astroUrl =
-  'https://api.allorigins.win/raw?url=http://api.open-notify.org/astros.json';
-// 备选：const astroUrl = 'https://cors.isomorphic-git.org/http://api.open-notify.org/astros.json';
-
+  ' https://cors-anywhere.herokuapp.com/http://api.open-notify.org/astros.json';
 const wikiUrl = 'https://en.wikipedia.org/api/rest_v1/page/summary/';
 const peopleList = document.getElementById('people');
 const btn = document.querySelector('button');
@@ -11,65 +8,72 @@ const btn = document.querySelector('button');
 // ------------------------------------------
 //  Event LISTENER
 // ------------------------------------------
+
 btn.addEventListener('click', trigger);
 
 // ------------------------------------------
 //  Fetch FUNCTIONS
 // ------------------------------------------
-async function trigger() {
-  btn.textContent = 'Loading...';
-  try {
-    const data = await fetchData(astroUrl); // { number, people: [...] }
-    const results = await Promise.all(
-      data.people.map(async (item) => {
-        const res = await fetch(wikiUrl + encodeURIComponent(item.name));
-        const wiki = await res.json();
-        return { wiki, craft: item.craft };
+
+function trigger() {
+  btn.innerHTML = 'Loading...';
+  fetchData(astroUrl)
+    .then((promise) =>
+      promise.people.map((item) => {
+        return [
+          fetch(wikiUrl + item.name).then((response) => response.json()),
+          item.craft,
+        ];
       }),
-    );
-    results.forEach(({ wiki, craft }) => generateHTML(wiki, craft));
-  } catch (e) {
-    console.error(e);
-    peopleList.insertAdjacentHTML(
-      'beforeend',
-      `<p>Failed to load data: ${e}</p>`,
-    );
-  } finally {
-    btn.remove();
-  }
+    )
+    .then((fetcharray) => Promise.all(fetcharray))
+    .then((response) =>
+      response.map((item) =>
+        item[0].then((data) => generateHTML(data, item[1])),
+      ),
+    )
+    // .then(response => response.map(item => item.json().then(data => generateHTML(data))))
+    // finally is called once a promise is fully settled regardless of whether the promise is fullfilled or rejected
+    .finally(() => btn.remove());
 }
+
+// ------------------------------------------
+//  HELPER FUNCTIONS
+// ------------------------------------------
 
 function fetchData(url) {
-  return fetch(url).then((response) => {
-    if (!response.ok) throw Error(response.status);
-    return response.json();
-  });
+  return (
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw Error(response.status);
+        } else {
+          return response.json();
+        }
+      })
+      // return promise object
+      .catch((err) => console.log(err.message))
+  );
 }
 
-function generateHTML(data, craft) {
+function generateHTML(data, data1) {
   const section = document.createElement('section');
   peopleList.appendChild(section);
-
-  // 一些条目可能没有 thumbnail，做个兜底
-  const thumb =
-    data.thumbnail && data.thumbnail.source
-      ? data.thumbnail.source
-      : 'img/profile.jpg';
-
+  // Check if request returns a 'standard' page from Wiki
   if (data.type === 'standard') {
     section.innerHTML = `
-      <img src="${thumb}" alt="${data.title}">
-      <span>${craft}</span>
-      <h2>${data.title}</h2>
-      <p>${data.description || ''}</p>
-      <p>${data.extract || ''}</p>
-    `;
+    <img src=${data.thumbnail.source}>
+    <span>${data1}</span>
+    <h2>${data.title}</h2>
+    <p>${data.description}</p>
+    <p>${data.extract}</p>
+  `;
   } else {
     section.innerHTML = `
-      <img src="img/profile.jpg" alt="fallback">
-      <h2>${data.title}</h2>
-      <p>Results unavailable for ${data.title}</p>
-      ${data.extract_html || ''}
-    `;
+    <img src="img/profile.jpg" alt="ocean clouds seen from space">
+    <h2>${data.title}</h2>
+    <p>Results unavailable for ${data.title}</p>
+    ${data.extract_html}
+  `;
   }
 }
