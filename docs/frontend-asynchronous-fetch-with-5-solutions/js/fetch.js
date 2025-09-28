@@ -1,5 +1,6 @@
 // jshint esversion:6
-const astroUrl = 'http://api.open-notify.org/astros.json';
+const astroUrl =
+  'https://api.allorigins.win/raw?url=http://api.open-notify.org/astros.json';
 const wikiUrl = 'https://en.wikipedia.org/api/rest_v1/page/summary/';
 const peopleList = document.getElementById('people');
 const btn = document.querySelector('button');
@@ -15,14 +16,25 @@ btn.addEventListener('click', trigger);
 // ------------------------------------------
 
 function trigger() {
-  btn.innerHTML="Loading...";
+  btn.innerHTML = 'Loading...';
   fetchData(astroUrl)
-    .then(promise => promise.people.map(item => {return [fetch(wikiUrl+item.name).then(response=>response.json()),item.craft];}))
-    .then(fetcharray =>  Promise.all(fetcharray))
-    .then(response => response.map(item=>item[0].then(data=>generateHTML(data,item[1]))))
+    .then((promise) =>
+      promise.people.map((item) => {
+        return [
+          fetch(wikiUrl + item.name).then((response) => response.json()),
+          item.craft,
+        ];
+      }),
+    )
+    .then((fetcharray) => Promise.all(fetcharray))
+    .then((response) =>
+      response.map((item) =>
+        item[0].then((data) => generateHTML(data, item[1])),
+      ),
+    )
     // .then(response => response.map(item => item.json().then(data => generateHTML(data))))
     // finally is called once a promise is fully settled regardless of whether the promise is fullfilled or rejected
-    .finally(()=>btn.remove());
+    .finally(() => btn.remove());
 }
 
 // ------------------------------------------
@@ -30,15 +42,21 @@ function trigger() {
 // ------------------------------------------
 
 function fetchData(url) {
-  return fetch(url)
-          .then(response => {if (!response.ok) { throw Error(response.status); }
-                             else {return response.json();}})
-                             // return promise object
-          .catch(err => console.log(err.message));
+  return (
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw Error(response.status);
+        } else {
+          return response.json();
+        }
+      })
+      // return promise object
+      .catch((err) => console.log(err.message))
+  );
 }
 
-
-function generateHTML(data,data1) {
+function generateHTML(data, data1) {
   const section = document.createElement('section');
   peopleList.appendChild(section);
   // Check if request returns a 'standard' page from Wiki
