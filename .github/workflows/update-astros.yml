@@ -27,11 +27,46 @@ jobs:
             sudo apt-get install -y jq
           fi
 
-      - name: Fetch remote astros and validate
+      - name: Fetch remote astros and validate (print & guard)
         run: |
           set -e
-          curl -sL "http://api.open-notify.org/astros.json" -o astros.tmp.json
-          # 校验：必须包含 people 且为数组
-          jq -e '.people | arrays' astros.tmp.json >/dev/null
-          # 格式化写入到 Pages 路径
-          jq . astros.tmp.json > docs/fr
+          # 抓取（HTTPS 页面不能直接访问 HTTP，但 Actions 可以）
+          curl -sSfL "http://api.open-notify.org/astros.json" -o astros.tmp.json
+
+          echo "----- Raw response (first 400 chars) -----"
+          head -c 400 astros.tmp.json; echo
+          echo "------------------------------------------"
+
+          echo "Summary:"
+          jq -r '"message=\(.message)  number=\(.number)  people_count=\(.people|length)"' astros.tmp.json
+
+          # people 必须是数组
+          jq -e '.people | type == "array"' astros.tmp.json > /dev/null
+
+          # 非空才覆盖，避免写成 { "people": [] }
+          PEOPLE_COUNT=$(jq '.people | length' astros.tmp.json)
+          if [ "$PEOPLE_COUNT" -gt 0 ]; then
+            mkdir -p docs/frontend-asynchronous-fetch-with-5-solutions/data
+            jq . astros.tmp.json > docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.json
+            echo "✅ Updated astros.json with ${PEOPLE_COUNT} records."
+          else
+            echo "::warning:: API returned empty people list. Keep previous astros.json."
+          fi
+
+          echo "Files in target dir:"
+          ls -lah docs/frontend-asynchronous-fetch-with-5-solutions/data || true
+
+          rm -f astros.tmp.json
+
+      - name: Commit & push if changed
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/frontend-asynchronous-fetch-with-5-solutions/data/astros.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update astros.json (automated)"
+          git push
