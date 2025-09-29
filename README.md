@@ -29,6 +29,8 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 
 ####       Framework Vue:
 
+[E-commerce  practice👈](https://kkkokili.github.io/web-projects/frontend-vue-practice-ecommerce/)
+
 
 
 ####       API Practice:
