@@ -33,6 +33,10 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 
 ####       API Practice:
 
+[Asynchronous fetch practice with 5 solutions 👈](https://kkkokili.github.io/web-projects/frontend-asynchronous-fetch-with-5-solutions/)
+
+[Employee Directory👈](https://kkkokili.github.io/web-projects/frontend-fetch-api-practice/)
+
 
 
 ####       Basic html, css, js practice:
