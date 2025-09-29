@@ -37,6 +37,10 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 
 [Employee Directory👈](https://kkkokili.github.io/web-projects/frontend-fetch-api-practice/)
 
+[Ajax Practice👈](https://kkkokili.github.io/web-projects/frontend-ajax-basics/)
+
+[Dog Breed 👈](https://kkkokili.github.io/web-projects/frontend-fetch-api-practice-dogBreed/)
+
 
 
 ####       Basic html, css, js practice:
@@ -47,7 +51,7 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 
 &nbsp;&nbsp;&nbsp;    [Random Quotes👈](https://kkkokili.github.io/web-projects/frontend-basic-randomQuoteGenerator/)
 
-&nbsp;      [Simple Dicee Roll GameS👈](https://kkkokili.github.io/web-projects/frontend-basic-simpleDicessRollGame/)
+&nbsp;      [Simple Dicee Roll Game👈](https://kkkokili.github.io/web-projects/frontend-basic-simpleDicessRollGame/)
 
 ​       [TinDog👈](https://kkkokili.github.io/web-projects/frontend-basic-tinDog/)
 
