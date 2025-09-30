@@ -7,11 +7,13 @@ It serves as a showcase of my learning, experiments, and practice across differe
 
 ## 📂 Repository Structure (example)
 
+<pre>
 web-projects/
- ├─ frontend/        # Frontend apps and static projects
- ├─ backend/         # Backend services (Node.js/Express)
- ├─ fullstack/       # Full-stack applications
- └─ docs/            # GitHub Pages site (deployment folder)
+├─ frontend/   # Frontend apps and static projects
+├─ backend/    # Backend services (Node.js/Express)
+├─ fullstack/  # Full-stack applications
+└─ docs/       # GitHub Pages site (deployment folder)
+</pre>
 
 
 
