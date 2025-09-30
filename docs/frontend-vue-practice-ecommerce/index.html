@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <base href="web-projects/docs/frontend-vue-practice-ecommerce">
+    <!-- <base href="web-projects/docs/frontend-vue-practice-ecommerce" /> -->
     <meta charset="UTF-8" />
     <title>E-commerce Example Application</title>
     <link rel="stylesheet" href="./css/style.css" />
@@ -38,7 +38,7 @@
             <div class="thumbnail">
               <img
                 class="group list-group-image"
-                src="http://placehold.it/400x250/000/fff"
+                src="https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/mba13-skyblue-select-202503?wid=904&hei=840&fmt=jpeg&qlt=90&.v=M2RyY09CWXlTQUp1KzEveHR6VXNxcTQ1bzN1SitYTU83Mm9wbk1xa1lWNC9UNzNvY2N5NXJTTDQ2YkVYYmVXakJkRlpCNVhYU3AwTldRQldlSnpRa0lIV0Fmdk9rUlVsZ3hnNXZ3K3lEVlk"
               />
               <div class="caption">
                 <h4 class="group inner list-group-item-heading">
@@ -98,7 +98,9 @@
                   >
                     +
                   </button>
-                  <button class="btn btn-danger" @click="decreaseItem(item)">-</button>
+                  <button class="btn btn-danger" @click="decreaseItem(item)">
+                    -
+                  </button>
                 </td>
 
                 <td>{{item.quantity*item.price}}</td>
@@ -130,7 +132,11 @@
 
               <tr>
                 <td colspan="2"></td>
-                <td><button class="btn btn-success" @click="checkOut">Checkout</button></td>
+                <td>
+                  <button class="btn btn-success" @click="checkOut">
+                    Checkout
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -139,7 +145,7 @@
       </div>
     </div>
 
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@2.7.16/dist/vue.min.js"></script>
     <script src="./js/app.js"></script>
   </body>
 </html>
