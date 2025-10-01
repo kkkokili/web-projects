@@ -56,6 +56,16 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 
 ------
 
+### 📌 Full-stack
+
+#### 🌍 MERN / Express + Frontend
+
+- [BMI Calculator](https://bmi-calculator-l52c.onrender.com/) 👈
+
+
+
+------
+
 ## ✨ Features
 
 - Frontend apps built with **HTML, CSS, JavaScript, React, Vue**
