@@ -5,6 +5,12 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (req, res) => {
+  res.redirect('/bmicalculator');
+  // 或者：
+  // res.sendFile(path.join(__dirname, 'bmiCalculator.html'));
+});
+
 app.get('/bmicalculator', (req, res) => {
   res.sendFile(__dirname + '/bmiCalculator.html');
 });
