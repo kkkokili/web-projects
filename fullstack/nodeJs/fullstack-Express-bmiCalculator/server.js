@@ -37,6 +37,8 @@ app.post('/bmicalculator', (req, res) => {
             </body> `);
 });
 
-app.listen(3000, () => {
-  console.log('The port now starts to listen on 3000!');
+// --------------------- Start ---------------------
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
