@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 # 🧮 BMI Calculator (Express.js)
+=======
+# Express_Deployed_BMI_Calculator
+## Demo: https://bmi-calculator-l52c.onrender.com/bmicalculator
+>>>>>>> 6b4cc4a01aac236557311af634387ff63dd386b9
 
 👉 **Live Demo**: [BMI Calculator on Render](https://bmi-calculator-l52c.onrender.com/)  
 👉 **GitHub Repo**: [View on GitHub](https://github.com/kkkokili/web-projects/tree/gh-pages/fullstack/nodeJs/fullstack-Express-bmiCalculator)
