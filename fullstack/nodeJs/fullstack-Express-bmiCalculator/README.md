@@ -1,7 +1,7 @@
 # 🧮 BMI Calculator (Express.js)
 
 👉 **Live Demo**: [BMI Calculator on Render](https://bmi-calculator-l52c.onrender.com/)  
-👉 **GitHub Repo**: [View on GitHub](https://github.com/kkkokili/web-projects/tree/gh-pages/fullstack/nodeJs/fullstack-Express-bmiCalculator)
+
 
 ---
 
