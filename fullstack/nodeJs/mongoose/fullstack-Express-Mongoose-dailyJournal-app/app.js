@@ -14,24 +14,17 @@ app.use(express.static('public'));
 
 // --------------- MongoDB --------------------
 // 兼容你现有的 passWord；也支持更标准的 MONGO_* 命名。
-const USER = process.env.MONGO_USER || 'admin-xiaotong';
-const RAW_PASS = process.env.MONGO_PASS || process.env.passWord || '';
-const HOST = process.env.MONGO_HOST || 'cluster0.irgncm5.mongodb.net';
-const DBNAME = process.env.MONGO_DB || 'JournalDB';
+const USER = 'admin-xiaotong';
+const PASS = encodeURIComponent(process.env.passWord);
+const HOST = 'cluster0.irgncm5.mongodb.net';
+const DBNAME = 'JournalDB';
 
-const PASS = encodeURIComponent(RAW_PASS);
-const SRV = `mongodb+srv://${USER}:${PASS}@${HOST}/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${USER}:${PASS}@${HOST}/${DBNAME}?retryWrites=true&w=majority&appName=Cluster0`;
 
-async function connectDB() {
-  try {
-    await mongoose.connect(SRV, { dbName: DBNAME }); // ✅ Mongoose v6+ 不需要老选项
-    console.log('Mongo connected');
-  } catch (e) {
-    console.error('Mongo connect error:', e);
-    process.exit(1); // 让 Render 重新拉起，避免挂死
-  }
-}
-connectDB();
+mongoose
+  .connect(uri)
+  .then(() => console.log('Mongo connected'))
+  .catch((err) => console.error('Mongo connection error:', err));
 
 // schema + model
 const itemSchema = new mongoose.Schema(
