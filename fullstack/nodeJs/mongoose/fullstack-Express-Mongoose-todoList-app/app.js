@@ -3,7 +3,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import _ from 'lodash';
-const passWord = encodeURIComponent(process.env.passWord);
+const PASS = encodeURIComponent(process.env.passWord);
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(express.static('static'));
 
 // ----- Mongo Connection (Mongoose 7+) -----
 const USER = 'admin-xiaotong';
-const PASS = encodeURIComponent(passWord); // 密码含 @/#/! 必须编码
+
 const SRV =
   `mongodb+srv://${USER}:${PASS}` +
   `@cluster0.irgncm5.mongodb.net/todolistDB?retryWrites=true&w=majority&appName=Cluster0`;
