@@ -21,8 +21,10 @@ const DBNAME = 'JournalDB';
 
 const uri = `mongodb+srv://${USER}:${PASS}@${HOST}/${DBNAME}?retryWrites=true&w=majority&appName=Cluster0`;
 
-mongoose
-  .connect(uri)
+await mongoose
+  .connect(uri, {
+    writeConcern: { w: 'majority', wtimeoutMS: 2500, journal: true },
+  })
   .then(() => console.log('Mongo connected'))
   .catch((err) => console.error('Mongo connection error:', err));
 
