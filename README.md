@@ -50,7 +50,7 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 
 ### 📌 Backend
 
-#### 🚀 Node.js
+#### 🚀 Node.js+Mongoose
 
 - [Authentication-Secrets](https://authentication-secrets-tmdm.onrender.com/) 👈
 
@@ -66,7 +66,7 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 
 #### 🌍 MERN / Express + Frontend+Mongoose No.sql
 
-- [BMI Calculator](https://bmi-calculator-l52c.onrender.com/) 👈      **GitHub Repo**: [View on GitHub](https://github.com/kkkokili/web-projects/tree/gh-pages/fullstack/nodeJs/fullstack-Express-bmiCalculator)
+- [Daily Journal](https://daily-journal-d19y.onrender.com/) 👈      **GitHub Repo**: [View on GitHub](https://github.com/kkkokili/web-projects/tree/gh-pages/fullstack/nodeJs/mongoose/fullstack-Express-Mongoose-dailyJournal-app)
 
 
 
