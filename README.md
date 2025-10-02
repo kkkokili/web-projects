@@ -61,7 +61,7 @@ This repository uses the `docs/` folder for GitHub Pages hosting static pages.
 #### 🌍 MERN / Express + Frontend
 
 - [BMI Calculator](https://bmi-calculator-l52c.onrender.com/) 👈      **GitHub Repo**: [View on GitHub](https://github.com/kkkokili/web-projects/tree/gh-pages/fullstack/nodeJs/fullstack-Express-bmiCalculator)
-- [Newsletter Signup](https://newsletter-signup-5vmf.onrender.com/)     **GitHub Repo**: [View on GitHub](https://github.com/kkkokili/web-projects/tree/gh-pages/fullstack/nodeJs/fullstack-Express-newsletter-signup)
+- [Newsletter Signup](https://newsletter-signup-5vmf.onrender.com/) 👈     **GitHub Repo**: [View on GitHub](https://github.com/kkkokili/web-projects/tree/gh-pages/fullstack/nodeJs/fullstack-Express-newsletter-signup)
 - 
 
 
