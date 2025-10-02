@@ -1,5 +1,11 @@
 // jshint esversion:6
 
+console.log('>>> CWD:', process.cwd());
+console.log(
+  '>>> ENTRY FILE:',
+  import.meta && import.meta.url ? import.meta.url : __filename,
+);
+console.log('>>> NODE VERSION:', process.version);
 // --------------- imports --------------------
 import express from 'express';
 import ejs from 'ejs';
