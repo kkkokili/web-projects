@@ -3,7 +3,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import _ from 'lodash';
-const passWord = encodeURIComponent(process.env.passWord || '');
+const passWord = encodeURIComponent(process.env.passWord);
 
 const app = express();
 
