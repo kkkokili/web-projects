@@ -12,32 +12,47 @@ import ejs from 'ejs';
 import mongoose from 'mongoose';
 import _ from 'lodash';
 
-// --------------- app setup ------------------
+// --- Express app & middlewares ---
 const app = express();
-app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: true }));
+
+app.set('view engine', 'ejs'); // 使用 EJS
+app.use(express.urlencoded({ extended: true })); // 解析表单 req.body
 app.use(express.static('public'));
 
-// --------------- MongoDB --------------------
-// 兼容你现有的 passWord；也支持更标准的 MONGO_* 命名。
-const USER = 'admin-xiaotong';
-const PASS = encodeURIComponent(process.env.passWord);
-const HOST = 'cluster0.irgncm5.mongodb.net';
-const DBNAME = 'JournalDB';
+// 兼容你现在 Render 只有 passWord 的情况；也支持 MONGO_* 四件套
+const legacySrv = (process.env.MONGO_URI || '').trim();
+const useSrvFromEnv = legacySrv.startsWith('mongodb+srv://');
 
-const uri = `mongodb+srv://${USER}:${PASS}@${HOST}/${DBNAME}?retryWrites=true&w=majority&appName=Cluster0`;
+const USER = process.env.MONGO_USER || 'admin-xiaotong';
+const PASS = encodeURIComponent(
+  process.env.MONGO_PASS || process.env.passWord || '6YOxqvjbVCNXilyM',
+);
+const DB = process.env.MONGO_DB || 'dailyJournalDB'; // ← dailyJournal 用自己的库名
+const APP = process.env.MONGO_APPNAME || 'Cluster0';
 
-await mongoose
-  .connect(uri, {
-    writeConcern: {
-      w: 'majority',
-      wtimeoutMS: 2500,
-      journal: true,
-      useUnifiedTopology: true,
-    },
-  })
-  .then(() => console.log('Mongo connected'))
-  .catch((err) => console.error('Mongo connection error:', err));
+const SRV = useSrvFromEnv
+  ? legacySrv
+  : `mongodb+srv://${USER}:${PASS}@cluster0.irgncm5.mongodb.net/${DB}?retryWrites=true&w=majority&appName=${APP}`;
+
+console.log('[DB] uses +srv:', SRV.startsWith('mongodb+srv://')); // 只打印前缀，不泄密
+
+try {
+  await mongoose.connect(SRV);
+  console.log('[DB] connected');
+} catch (e) {
+  console.error('[DB] connect failed:', {
+    name: e.name,
+    code: e.code,
+    codeName: e.codeName ?? e.reason?.codeName,
+    message: e.message,
+  });
+  process.exit(1); // 直接失败，避免“卡住”
+}
+
+// 运行期错误也打出来
+mongoose.connection.on('error', (err) => {
+  console.error('[DB] runtime error:', err);
+});
 
 // schema + model
 const itemSchema = new mongoose.Schema(
