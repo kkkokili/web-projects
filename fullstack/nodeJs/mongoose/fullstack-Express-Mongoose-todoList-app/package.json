@@ -1,5 +1,6 @@
 {
   "type": "module",
+   "engines": { "node": "20.17.0" },
   "name": "to-do-list_v1",
   "version": "1.0.0",
   "description": "",

@@ -1,7 +1,7 @@
 //jshint esversion:6
 
 // ---------------import modules Start--------------------
-import { passWord } from './password.mjs';
+const passWord = encodeURIComponent(process.env.passWord);
 
 import express from 'express';
 
