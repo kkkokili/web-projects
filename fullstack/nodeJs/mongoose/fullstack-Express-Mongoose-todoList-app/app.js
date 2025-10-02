@@ -3,7 +3,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import _ from 'lodash';
-import { passWord } from './password.mjs';
+const passWord = process.env.passWord;
 
 const app = express();
 
