@@ -1,138 +1,190 @@
 // jshint esversion:8
-import { Weather_API_KEY } from 'apikey.js';
+const Weather_API_KEY = require('./apikey.js'); // 导入
 const express = require('express');
 const app = express();
-
-// This "https" moudule is the native Node.js moudule which is used to fetch data
-// from external serval through API
 const https = require('https');
 
-// 出现一个bug, ***urlencoded打成了urlendcoded
+// ✅ 修正：extended（不是 entended）
 app.use(
   express.urlencoded({
-    entended: true,
+    extended: true,
   }),
 );
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
+// 静态资源（保持你原有的路由）
+app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/style.css', (req, res) => res.sendFile(__dirname + '/style.css'));
+app.get('/style1.css', (req, res) => res.sendFile(__dirname + '/style1.css'));
+app.get('/background/background.jpg', (req, res) =>
+  res.sendFile(__dirname + '/background/background.jpg'),
+);
+app.get('/icon/icon.png', (req, res) =>
+  res.sendFile(__dirname + '/icon/icon.png'),
+);
 
-app.get('/style.css', (req, res) => {
-  res.sendFile(__dirname + '/style.css');
-});
-
-app.get('/style1.css', (req, res) => {
-  res.sendFile(__dirname + '/style1.css');
-});
-
-app.get('/background/background.jpg', (req, res) => {
-  res.sendFile(__dirname + '/background/background.jpg');
-});
-
-app.get('/icon/icon.png', (req, res) => {
-  res.sendFile(__dirname + '/icon/icon.png');
-});
-
-app.post('/', (req, res) => {
-  // global variable array used to store daily data item in line x
-  var array = [];
-  // user input the latitude
-  const lat = Number(req.body.lat);
-  // user input the longitude
-  const lon = Number(req.body.lon);
-  // The weather API URL
-  const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,alerts,hourly&units=metric&appid=${Weather_API_KEY}`;
-
-  https.get(url, (response) => {
-    console.log(response.statusCode);
-    // The returned data below is in hexadecimal
-    response.on('data', (data) => {
-      // JSON.parse() will turn json in string format, hexadecimal, binary or text into actual js object
-      const weatherData = JSON.parse(data);
-      const location = weatherData.timezone;
-
-      // Current data
-      const currentTemperature = weatherData.current.temp;
-      const feelsLike = weatherData.current.feels_like;
-      const currentWeather = weatherData.current.weather[0].main.toUpperCase();
-      const icon = weatherData.current.weather[0].icon;
-      const iconURL = 'http://openweathermap.org/img/wn/' + icon + '@2x.png';
-
-      // Daily data
-      const operation = weatherData.daily.map((item) => {
-        array.push({
-          // item.dt是一串奇怪的ID数字，看了API的介绍google了下用以下方式转为中式的日期计数>>年/月/日
-          Date: new Date(item.dt * 1000).toLocaleDateString('zh-cn'),
-          DailyTemperature: item.temp.day + '℃',
-          NightTemperature: item.temp.night + '℃',
-          Description: item.weather[0].description,
-          Icon:
-            'http://openweathermap.org/img/wn/' +
-            item.weather[0].icon +
-            '@2x.png',
-          Humidity: item.humidity,
-          UVI: item.uvi,
+// 小工具：拉取并解析 JSON（解决响应分片）
+function fetchJson(url) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, (response) => {
+        let raw = '';
+        response.on('data', (chunk) => (raw += chunk));
+        response.on('end', () => {
+          try {
+            const j = JSON.parse(raw || '{}');
+            if (response.statusCode !== 200) {
+              // 把错误体也返回，便于调试
+              return reject({
+                statusCode: response.statusCode,
+                body: j,
+              });
+            }
+            resolve(j);
+          } catch (e) {
+            reject(e);
+          }
         });
-      });
+      })
+      .on('error', reject);
+  });
+}
 
-      // 以下time是获取的现在计算机上显示的时间
-      var today = new Date();
-      var time = today.getHours() + ':' + today.getMinutes();
-      console.log(time);
+// 表单提交：从免费端点组合出你需要的数据
+app.post('/', async (req, res) => {
+  try {
+    const lat = Number(req.body.lat);
+    const lon = Number(req.body.lon);
 
-      // response user back with the parsed data
-      var html = `
-      <html lang="en" dir="ltr">
-        <head>
-          <meta charset="utf-8">
-          <title>Fetch Weather</title>
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@600&display=swap" rel="stylesheet">
-          <!-- bootstrap -->
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-          <link rel="stylesheet" href="style1.css">
-        </head>
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      return res
+        .status(400)
+        .send(
+          '<pre>请输入正确的经纬度（数字）。例如：lat=31.2, lon=121.5</pre>',
+        );
+    }
 
-        <body>
-        <h1><img id="location-icon" src="/icon/icon.png" alt="location icon"></img>${location}</h1>
-        <h2>${time}<span>xx</span> ${currentWeather}<img id="current-icon" src=${iconURL} alt="weather icon"></img></h2>
-        <br>
-        <h3>TEMP:  ${currentTemperature}℃</h5>
-        <br>
-        <h3>FEEL:  ${feelsLike}℃</h5>
-        <br>
-        <br>
+    // 免费端点
+    const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${Weather_API_KEY}`;
+    const urlForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${Weather_API_KEY}`;
 
+    // 并发请求
+    const [current, forecast] = await Promise.all([
+      fetchJson(urlCurrent),
+      fetchJson(urlForecast),
+    ]);
+
+    // 当前天气
+    const location =
+      current.name && current.sys?.country
+        ? `${current.name}, ${current.sys.country}`
+        : current.name || current.sys?.country || 'Unknown';
+    const currentTemperature = current.main?.temp ?? '-';
+    const feelsLike = current.main?.feels_like ?? '-';
+    const currentWeather = (current.weather?.[0]?.main || '').toUpperCase();
+    const icon = current.weather?.[0]?.icon || '01d';
+    const iconURL = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
+    // 5天/3小时预报 → 按“日期”聚合（简易日/夜拆分）
+    const byDay = {};
+    for (const item of forecast.list || []) {
+      const dt = new Date(item.dt * 1000);
+      const dateKey = dt.toLocaleDateString('zh-cn'); // 年/月/日
+      const hour = dt.getHours();
+      byDay[dateKey] ||= {
+        temps: [],
+        nightTemps: [],
+        desc: [],
+        icon: item.weather?.[0]?.icon || '01d',
+        humidity: [],
+      };
+      byDay[dateKey].temps.push(item.main?.temp);
+      byDay[dateKey].humidity.push(item.main?.humidity);
+      byDay[dateKey].desc.push(item.weather?.[0]?.description || '');
+      if (hour >= 18 || hour < 6)
+        byDay[dateKey].nightTemps.push(item.main?.temp);
+    }
+
+    // 生成卡片数据
+    const avg = (arr) =>
+      arr && arr.length
+        ? (arr.reduce((a, b) => a + (Number(b) || 0), 0) / arr.length).toFixed(
+            1,
+          )
+        : '-';
+    const pickMid = (arr) =>
+      arr && arr.length ? arr[Math.floor(arr.length / 2)] : '';
+
+    const dayCards = Object.entries(byDay)
+      .slice(0, 8)
+      .map(([date, d]) => ({
+        Date: date,
+        DailyTemperature: avg(d.temps) !== '-' ? `${avg(d.temps)}℃` : '-',
+        NightTemperature:
+          avg(d.nightTemps) !== '-' ? `${avg(d.nightTemps)}℃` : '-',
+        Description: pickMid(d.desc),
+        Icon: `https://openweathermap.org/img/wn/${d.icon}@2x.png`,
+        Humidity: avg(d.humidity) !== '-' ? avg(d.humidity) : '-',
+        UVI: '-', // 免费端点没有 UVI
+      }));
+
+    // 时间显示
+    const now = new Date();
+    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(
+      2,
+      '0',
+    )}`;
+
+    // 页面拼装（保持你原先的结构/类名）
+    let html = `
+    <html lang="en" dir="ltr">
+      <head>
+        <meta charset="utf-8">
+        <title>Fetch Weather</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@600&display=swap" rel="stylesheet">
+        <!-- bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+        <link rel="stylesheet" href="style1.css">
+      </head>
+      <body>
+        <h1><img id="location-icon" src="/icon/icon.png" alt="location icon"/>${location}</h1>
+        <h2>${time}<span>xx</span> ${currentWeather}<img id="current-icon" src="${iconURL}" alt="weather icon"/></h2>
+        <br>
+        <h3>TEMP:  ${currentTemperature}℃</h3>
+        <br>
+        <h3>FEEL:  ${feelsLike}℃</h3>
+        <br><br>
         <div class="container">
           <div class="row">`;
-      // 上面最后这两行是下面for loop中html的开头
 
-      for (i = 0; i < 8; i++) {
-        html += `<br>
-        <div class="col-3 card">
-                 <img src=${array[i].Icon} alt="weather icon"></img>
-                 <h4>${array[i].Date}</h4>
-                 <br>
-                 <p>${array[i].Description.toUpperCase()}</p>
-                 <p>Day: ${array[i].DailyTemperature}</p>
-                 <p>Night: ${array[i].NightTemperature}</p>
-                 <p>Humidity: ${array[i].Humidity}</p>
-                 <p>UVI: ${array[i].UVI}</p>
-                 <br>
-        </div> `;
-      }
+    for (let i = 0; i < Math.min(8, dayCards.length); i++) {
+      const d = dayCards[i];
+      html += `
+        <div class="col-4">
+        <div class="card">
+          <img src="${d.Icon}" alt="weather icon"/>
+          <h4>${d.Date}</h4>
+          <p>${(d.Description || '').toUpperCase()}</p>
+          <p>Day: ${d.DailyTemperature}</p>
+          <p>Night: ${d.NightTemperature}</p>
+          <p>Humidity: ${d.Humidity}%</p>
+          ${d.UVI !== '-' ? `<p>UVI: ${d.UVI}</p>` : ``}
+        </div></div>`;
+    }
 
-      // 给html加上结尾
-      html += `</div>
-               </div>
-               </body>`;
-      res.send(html);
-    });
-  });
+    html += `</div></div></body></html>`;
+    res.send(html);
+  } catch (err) {
+    console.error('Weather fetch error:', err);
+    const pretty =
+      typeof err === 'object' ? JSON.stringify(err, null, 2) : String(err);
+    res
+      .status(500)
+      .send(`<pre>Weather API error (free endpoints):\n${pretty}</pre>`);
+  }
 });
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log('Port 3000 starts to listen!');
+  console.log('Server started.');
 });
