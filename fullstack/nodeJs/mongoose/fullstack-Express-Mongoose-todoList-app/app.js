@@ -1,198 +1,123 @@
-    // Finished Version
+// app.js  (ESM)
+// jshint esversion:8
+import express from 'express';
+import mongoose from 'mongoose';
+import _ from 'lodash';
+import { passWord } from './password.mjs';
 
-    // jshint esversion:8
-    import {passWord} from "./password.mjs";
+const app = express();
 
-    import express from 'express';
+// ----- View & Middlewares -----
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('static'));
 
-    import mongoose from 'mongoose';
+// ----- Mongo Connection (Mongoose 7+) -----
+const USER = 'admin-xiaotong';
+const PASS = encodeURIComponent(passWord); // 密码含 @/#/! 必须编码
+const SRV =
+  `mongodb+srv://${USER}:${PASS}` +
+  `@cluster0.irgncm5.mongodb.net/todolistDB?retryWrites=true&w=majority&appName=Cluster0`;
 
-    // intsall lodash >>> npm i --save lodash
-    // if jump out "npm ERR! code ENOENT" >>npm cahce clean --force / npm cache verify /npm i
+await mongoose.connect(SRV, {
+  writeConcern: { w: 'majority', wtimeoutMS: 2500, journal: true },
+});
 
-    import _ from 'lodash';
+// ----- Schemas & Models -----
+const itemSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+});
 
-    const app = express();
+const paramSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  items: { type: [itemSchema], default: [] }, // 默认空数组，避免校验问题
+});
 
-    app.set('view engine', 'ejs');
+const Task = mongoose.model('Task', itemSchema);
+const ParamList = mongoose.model('paramList', paramSchema);
 
-    // parse req.body
-    app.use(express.urlencoded({
-      extended: true
-    }));
+// ----- Date for default list title -----
+const options = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+const showDate = new Date().toLocaleDateString('en-US', options);
 
-    // -----------MONGOOSE--------------------
+// ----- Routes -----
+app.get('/', async (req, res) => {
+  try {
+    const items = await Task.find().lean();
+    res.render('index', { listTitle: showDate, arraylist: items });
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
 
-    mongoose.connect(`mongodb+srv://admin-xiaotong:${passWord}@cluster0.k4lze.mongodb.net/todolistDB`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+app.get('/about', (req, res) => res.render('about'));
 
-    const itemSchema = new mongoose.Schema({
-      name: String,
-    });
+app.get('/:topic', async (req, res) => {
+  const topic = _.startCase(_.toLower(req.params.topic));
+  try {
+    let doc = await ParamList.findOne({ name: topic }).lean();
+    if (!doc) {
+      await new ParamList({ name: topic }).save();
+      return res.render('index', { listTitle: topic, arraylist: [] });
+    }
+    res.render('index', { listTitle: doc.name, arraylist: doc.items });
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
 
-    // 或者 这样declare a schema
-    // const itemSchema = {
-    //   name: String
-    // };
+app.post('/', async (req, res) => {
+  const from = req.body.button;
+  const newTaskName = (req.body.task || '').trim();
+  if (!newTaskName) return res.redirect(from === showDate ? '/' : `/${from}`);
 
-    const task = mongoose.model('Task', itemSchema);
+  try {
+    const newListItem = await new Task({ name: newTaskName }).save();
 
-    // Create a new collection to store different urlInput and their list items
-    const paramSchema = {
-      name: String,
-      items: [itemSchema]
-    };
+    if (from === showDate) return res.redirect('/');
 
-    const paramlist = mongoose.model('paramList', paramSchema);
+    // 在自定义列表中追加
+    await ParamList.updateOne(
+      { name: from },
+      { $push: { items: newListItem } },
+      { upsert: true },
+    );
+    res.redirect(`/${from}`);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
 
-    // --------------MONGOOSE---------------------------------------
+app.post('/delete', async (req, res) => {
+  const id = req.body.checkbox;
+  const from = req.body.listname;
 
-    // task.deleteMany({}, (err, result) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     console.log(result);
-    //   }
-    // });
+  try {
+    if (from === showDate) {
+      await Task.findByIdAndDelete(id);
+      return res.redirect('/');
+    }
 
-    // ----------Declare Global Variables------------------------------------------------------
+    // 从子文档数组中移除
+    await ParamList.updateOne(
+      { name: from },
+      { $pull: { items: { _id: id } } },
+    );
+    res.redirect(`/${from}`);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
 
-    var newTask;
-
-    var options = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    };
-    var today = new Date();
-    var showDate = today.toLocaleDateString("en-US", options);
-
-    // ----------Declare Global Variables-----------------------------------------------------------
-
-    app.use(express.static('static'));
-
-
-    app.get('/', (req, res) => {
-      task.find((err, items) => {
-        if (err) {
-          console.log(err);
-        } else {
-          res.render('index', {
-            listTitle: showDate,
-            arraylist: items
-          });
-        }
-      });
-    });
-
-
-    app.get('/about', (req, res) => {
-      res.render('about');
-    });
-
-
-    app.get('/:topic', (req, res) => {
-      const topic = _.startCase(_.toLower(req.params.topic));
-      // _.startCase(_.toLower(str)); 首字母大写
-      // _.lowerCase(req.params.topic); 去掉各种符号+小写
-
-      paramlist.findOne({
-        name: topic
-      }, (err, findResult) => {
-        if (err) {
-          console.log(err);
-        } else {
-          // if there is no findresult
-          if (!findResult) {
-            const newTopic = new paramlist({
-              name: topic
-            });
-            // 我本来写了下面这行代码 但是报错说validation有问题，然后我把它隐掉了就好了
-            // 应该是因为items 设置了line 37的限制，所以不能传empty array
-            // items: []
-
-            newTopic.save()
-              .then(() => {
-                res.render('index', {
-                  listTitle: topic,
-                  arraylist: []
-                });
-              }).catch(err => console.log(err));
-          } else {
-
-            res.render('index', {
-              listTitle: findResult.name,
-              arraylist: findResult.items
-            });
-          }
-        }
-      });
-
-    });
-
-
-    app.post('/', (req, res) => {
-      const from = req.body.button;
-      newTask = req.body.task;
-      const newListItem = new task({
-        name: newTask
-      });
-
-      if (from == showDate) {
-        newListItem.save().then(() => {
-          res.redirect("/");
-        });
-      } else {
-        paramlist.findOne({
-          name: from
-        }, (err, results) => {
-          if (err) {
-            console.log(err);
-          } else {
-            results.items.push(newListItem);
-            results.save().then(() => {
-              res.redirect("/" + from);
-            });
-          }
-
-        });
-      }
-    });
-
-
-    app.post('/delete', (req, res) => {
-      const checkedItem = req.body.checkbox;
-      const from = req.body.listname;
-      if (from == showDate) {
-        task.findByIdAndRemove(checkedItem, (err) => {
-          if (err) {
-            console.log('Cant remove the checkedItem, because the item id has problem');
-          } else {
-            console.log('remove item by id success!');
-            res.redirect('/');
-          }
-        });
-      } else {
-        paramlist.findOne({
-          name: from
-        }, (err, findResult) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(findResult);
-            findResult.items.id(checkedItem).remove();
-            findResult.save().then(() => {
-              res.redirect("/" + from);
-            });
-          }
-        });
-      }
-    });
-
-
-    app.listen(process.env.PORT || 3000, () => {
-      console.log('Port 3000 has started to listen!');
-    });
+// ----- Server -----
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Port ${PORT} has started to listen!`));
