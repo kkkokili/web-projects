@@ -1,13 +1,73 @@
-# Express Deployed News Letter Sign Up Page<br/>
+# 📩 Express Newsletter Sign Up Page
 
-## Check Out the APP: [News Letter Sign Up Page](https://salty-tor-31149.herokuapp.com/)<br/><br/>
+## 🚀 Live Demo
+[News Letter Sign Up Page](https://newsletter-signup-5vmf.onrender.com/)
 
-## SKILLS:
-#### It covers the topic of **_HTML, CSS, JS, Node.js, Exptress, MailChimp, Heroku_**<br/><br/>
-
-## HOW DOES IT WORK:
-#### The project is deployed by Node.js and hosted by Heroku.  It mainly uses the Express library in node. The backend also takes advantage of MailChimp  API which is used to store and manage subscriber's info. As you can see in display,  after user submits the form, all the infomation flow to the MailChimp, and you can check out users' email, name and country there!<br/><br/> 
-
-## Display:<br/>
-
+## 🎬 Display
 ![Farmers Market Finder Demo](gif/NewsLetter.gif)
+
+---
+
+## 📖 Project Overview
+This is a simple **Newsletter Sign Up application** built with **Express (Node.js)**.  
+The frontend form collects a user's **first name, last name, email, and country**, while the backend integrates with the **Mailchimp Marketing API** to store subscriber data in a Mailchimp Audience list.  
+
+The app is deployed on **Render**, making it a great example project for understanding how to go from:
+**Frontend form ➝ Backend processing ➝ MailChamp API➝ Deployment.**
+
+---
+
+## ⚙️ Run Locally
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd newsletter-signup
+
+1. Install dependencies:
+
+   ```
+   npm install
+   ```
+
+2. Create a `.env` file in the root directory with your Mailchimp configuration:(如果不会搞问下gpt这两个在mail champ里去哪找怎么设置)
+
+   ```
+   MC_API_KEY=your_api_key-usX
+   MC_LIST_ID=your_list_id
+   ```
+
+3. Start the server:
+
+   ```
+   node app.js
+   ```
+
+   Then open http://localhost:3000 in your browser.
+
+------
+
+
+
+## ⚠️ Notes
+
+- **Port handling**: never hardcode the port. Use:
+
+  ```
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+  ```
+
+- **Security**: do not hardcode your Mailchimp API key or List ID in code — always use environment variables.
+
+- **COUNTRY field**: if you want to save a custom `COUNTRY` field, you must create a merge tag called `COUNTRY` in your Audience settings.
+
+- **Avoid duplicates**: use `setListMember` instead of `addListMember`, so existing subscribers are updated instead of causing errors.
+
+------
+
+## 🛠️ Tech Stack
+
+- **Frontend**: HTML, CSS
+- **Backend**: Node.js, Express
+- **API**: Mailchimp Marketing API
+- **Deployment**: Render / Heroku

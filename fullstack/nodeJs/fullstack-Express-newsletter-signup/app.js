@@ -1,102 +1,97 @@
 // jshint esversion:8
-import {MailChimp_apikey, MailChimp_listID} from "apikey.js";
-
+const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
+const client = require('@mailchimp/mailchimp_marketing');
+const { MailChimp_apikey, MailChimp_listID } = require('./apikey');
 
 const app = express();
 
-const client = require("@mailchimp/mailchimp_marketing");
-
-app.use(express.urlencoded({
-  extended: true
-}));
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/NewsLetter.html');
-});
-
+// 解析表单
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('static'));
 
-app.post('/', (req, res) => {
-  const fname = req.body.fname;
-  const lname = req.body.lname;
-  const email = req.body.email;
-  const country = req.body.country;
-  // country without problem
-  console.log(country);
+// ===== Mailchimp 基础配置（从 key 自动取数据中心）=====
+function configMailchimp() {
+  const dc = (MailChimp_apikey || '').split('-')[1]; // 例如 'us3'
+  if (!dc) {
+    throw new Error(
+      'Invalid Mailchimp API key: cannot parse data center suffix.',
+    );
+  }
+  client.setConfig({ apiKey: MailChimp_apikey, server: dc });
+}
 
-  client.setConfig({
-    apiKey: MailChimp_apikey,
-    server: "us6",
-  });
+// ===== 确保受众里有 COUNTRY 字段；没有就创建 =====
+// 尝试确保有 COUNTRY merge field —— 已存在就忽略错误
+async function ensureCountryMergeField(listId) {
+  try {
+    await client.lists.addListMergeField(listId, {
+      name: 'Country',
+      type: 'text',
+      tag: 'COUNTRY',
+      public: true,
+      required: false,
+    });
+  } catch (e) {
+    // 如果已经存在，Mailchimp 会返回 400/某些标题，直接忽略即可
+    const title = e?.response?.body?.title || '';
+    if (e.status === 400 && /already exists|Invalid Resource/i.test(title)) {
+      // 字段已存在/不可重复创建，忽略
+      return;
+    }
+    throw e; // 其他错误再抛出
+  }
+}
 
-  const run = async () => {
-    const response = await client.lists.addListMember(MailChimp_listID, {
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'NewsLetter.html'));
+});
+
+app.post('/', async (req, res) => {
+  const fname = (req.body.fname || '').trim();
+  const lname = (req.body.lname || '').trim();
+  const email = (req.body.email || '').trim().toLowerCase();
+  const country = (req.body.country || '').trim();
+
+  // 简单邮箱校验
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    console.error('Invalid email:', email);
+    return res.sendFile(path.join(__dirname, 'failure.html'));
+  }
+
+  try {
+    configMailchimp();
+
+    // 确保有 COUNTRY 字段
+    await ensureCountryMergeField(MailChimp_listID);
+
+    const subscriberHash = crypto.createHash('md5').update(email).digest('hex');
+
+    await client.lists.setListMember(MailChimp_listID, subscriberHash, {
       email_address: email,
-      status: "subscribed",
+      status_if_new: 'subscribed', // 新用户：订阅
+      status: 'subscribed', // 老用户：保持订阅
       merge_fields: {
         FNAME: fname,
         LNAME: lname,
-        COUNTRY: country
-      }
+        COUNTRY: country, // ✅ 一定会写入
+      },
     });
 
-  };
+    return res.sendFile(path.join(__dirname, 'success.html'));
+  } catch (err) {
+    // 打印详细错误，便于快速定位
+    const status = err.status || err.statusCode;
+    const body = err.response?.body || err;
+    console.error('Mailchimp error status:', status);
+    console.error('Mailchimp error body:', body);
 
-  run().then(() => res.sendFile(__dirname+'/success.html'))
-       .catch(error => {console.log(error.message, error.statusCode);
-                        res.sendFile(__dirname+'/failure.html');});
-
+    return res.sendFile(path.join(__dirname, 'failure.html'));
+  }
 });
 
-
-
+// Render/本地端口
 app.listen(process.env.PORT || 3000, () => {
-  console.log('Port 3000 has started to listen!');
+  console.log('Server listening on', process.env.PORT || 3000);
 });
-
-
-
-// 1. Add member to list:
-
-// const client = require("@mailchimp/mailchimp_marketing");
-//
-// client.setConfig({
-//   apiKey: "YOUR_API_KEY",
-//   server: "YOUR_SERVER_PREFIX",
-// });
-//
-// const run = async () => {
-//   const response = await client.lists.addListMember("list_id", {
-//     email_address: "Lionel.Lang16@yahoo.com",
-//     status: "unsubscribed",
-//   });
-//   console.log(response);
-// };
-//
-// run();
-
-// Note: If you’re not sure whether or not a contact has already been added to
-//  an audience, you should use the Add or update list member endpoint. This will
-// create the contact if it doesn’t already exist, or update a contact’s
-// information if it does.
-
-// 2. Add or update list member:
-
-// const client = require("@mailchimp/mailchimp_marketing");
-//
-// client.setConfig({
-//   apiKey: "YOUR_API_KEY",
-//   server: "YOUR_SERVER_PREFIX",
-// });
-//
-// const run = async () => {
-//   const response = await client.lists.setListMember(
-//     "list_id",
-//     "subscriber_hash",
-//     { email_address: "Sammy_Klein@hotmail.com", status_if_new: "pending" }
-//   );
-//   console.log(response);
-// };
-//
-// run();
