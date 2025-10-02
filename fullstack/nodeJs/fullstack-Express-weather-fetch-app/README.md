@@ -1,17 +1,99 @@
-# Express Deployed Weather Fetch WebAPP</br></br>
-
-## Check Out the APP: [Weather Fetch App](https://frozen-hollows-73521.herokuapp.com/)<br/><br/>
-
-### The Express Deployed Weather Fetch Web APP utilizes the data of [Open Weather API](https://openweathermap.org/api) as raw material. It first presents a web page where users could input the latitude and longitude of a location, and then the realtime weather condition in the moment as well as that in the next 7 days will be loaded.</br>
-
-
-
-## SKILLS:
-#### It covers the topic of **_HTML, CSS, Bootstrap, Js, Node.js and  Express**<br/><br/>
-
-## HOW DOES IT WORK:
-#### The project is deployed by Node.js and hosted on Heroku.  The repo contains the backend file: app. js which I tested locally by running it through by nodemon (a package installed through npm: node package manager) to simplify the node.js restart procedures in terminal. <br/><br/> 
+# 🌦 Express Weather Fetch App
 
 ## Display:<br/>
 
 ![Farmers Market Finder Demo](gif/weather.gif)
+
+
+
+## 📌 Live Demo
+
+👉 [Fetch Weather](https://weather-fetch-5ksz.onrender.com/)
+
+
+
+
+
+------
+
+## 📖 Project Overview
+
+This is a **Node.js + Express** full-stack mini project.
+ The frontend provides a form for users to input latitude and longitude, while the backend fetches data from the **OpenWeather API** and dynamically renders weather cards to the page.
+
+Originally, the project used **One Call v2.5 API**, but since it is now deprecated, it has been updated to use the **5-day/3-hour Forecast API**, which is available for free.
+
+------
+
+## 🚀 Getting Started
+
+1. Clone the repository:
+
+   ```
+   git clone https://github.com/kkkokili/web-projects.git
+   cd web-projects/fullstack/nodeJs/fullstack-Express-weather-fetch-app
+   ```
+
+2. Install dependencies:
+
+   ```
+   npm install
+   ```
+
+3. Create a file `apikey.js` in the project root to store your API key:
+
+   ```
+   module.exports = "YOUR_API_KEY";
+   ```
+
+4. Start the server:
+
+   ```
+   node app.js
+   ```
+
+5. Open the app in your browser:
+
+   ```
+   http://localhost:3000
+   ```
+
+------
+
+## 📝 Features
+
+- Input latitude and longitude to fetch weather data.
+- Fetches **current weather** and **multi-day forecasts** using the OpenWeather **Forecast API**.
+- Parses JSON data and dynamically renders an HTML response containing:
+  - City name and weather condition
+  - Current temperature and "feels like" temperature
+  - Forecast cards with date, day/night temperature, humidity, and weather icons
+- Bootstrap layout: cards are displayed in **3 fixed columns** with spacing using `row g-4`.
+
+------
+
+## 🔑 Key Updates
+
+- Replaced deprecated **One Call API v2.5** with **Forecast API**:
+
+  ```
+  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${Weather_API_KEY}`;
+  ```
+
+- Changed card layout from `col-3` to `col-4` → ensures **3 cards per row**.
+
+- Added `row g-4` for spacing between cards.
+
+- Removed `.card { margin: 3rem; }` to prevent columns from breaking the layout.
+
+------
+
+## ⚙️ Tech Stack
+
+- **Node.js**
+- **Express.js**
+- **HTTPS (Node.js built-in module)**
+- **Bootstrap 5**
+- **OpenWeather API**
+- **HTML + CSS**
+
