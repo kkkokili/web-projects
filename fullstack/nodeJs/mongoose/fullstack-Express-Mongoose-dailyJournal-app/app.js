@@ -23,7 +23,12 @@ const uri = `mongodb+srv://${USER}:${PASS}@${HOST}/${DBNAME}?retryWrites=true&w=
 
 await mongoose
   .connect(uri, {
-    writeConcern: { w: 'majority', wtimeoutMS: 2500, journal: true },
+    writeConcern: {
+      w: 'majority',
+      wtimeoutMS: 2500,
+      journal: true,
+      useUnifiedTopology: true,
+    },
   })
   .then(() => console.log('Mongo connected'))
   .catch((err) => console.error('Mongo connection error:', err));
