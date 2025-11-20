@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* -------------------------------- */
+/* the progress bar’s filling animation: fill smoothly grows from left to right over 1.5 seconds as its value increases from 0 to fetched data */
+/* Chrome / Edge / Safari */
+progress[value]::-webkit-progress-value {
+  transition: width 1.5s ease-out;
+}
+
+/* Firefox */
+progress[value]::-moz-progress-bar {
+  transition: width 1.5s ease-out;
+}
+
+.shiny-once {
+  position: relative;
+  overflow: hidden;
+  --target: 0%; /* 由 JS 设置闪光停的位置(百分比) */
+}
+/* --------------------------------- */
+
+/* 闪光条 */
+.shiny-once::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  pointer-events: none;
+
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+
+  opacity: 0;
+}
+
+/* 添加.animate 时播放一次动画 */
+.shiny-once.animate::before {
+  animation: shiny-sweep var(--time, 0.8s) ease-out forwards;
+}
+
+@keyframes shiny-sweep {
+  0% {
+    left: -40%;
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    left: var(--target);
+    opacity: 0;
+  }
+}
+
+.donation-text {
+  font-family: "Roboto", sans-serif;
+  color: #4c5f64;
+}
