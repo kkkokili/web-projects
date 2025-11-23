@@ -1,5 +1,5 @@
 export async function getData() {
-  const res = await fetch("./mock.json");
+  const res = await fetch("https://kkkokili.github.io/web-projects/frontend-widget-donation-progress-bar/build/mock.json");
   if (!res.ok) {
     const error = new Error(`Request failed: ${res.status} ${res.statusText}`);
     error.status = res.status;
