@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import ProgressBar from "./ProgressBar";
 import DonationStatistics from "./DonationStatistics";
 import donationWidgetConfig from "../../config/donationWidgetConfig";
@@ -6,7 +6,7 @@ import donationWidgetConfig from "../../config/donationWidgetConfig";
 export default function DonationWidget({ data, error }) {
   const ref = useRef(null);
 
-  const { scaleClass, showCenter } = donationWidgetConfig;
+  const { scaleClass } = donationWidgetConfig;
 
   useEffect(() => {
     if (!ref.current) return;

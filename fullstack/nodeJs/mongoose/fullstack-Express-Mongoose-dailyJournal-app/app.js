@@ -27,7 +27,7 @@ const USER = process.env.MONGO_USER || 'admin-xiaotong';
 const PASS = encodeURIComponent(
   process.env.MONGO_PASS || process.env.passWord || '6YOxqvjbVCNXilyM',
 );
-const DB = process.env.MONGO_DB || 'JournalDB'; // ← dailyJournal 用自己的库名
+const DB = 'JournalDB'; // ← dailyJournal 用自己的库名
 const APP = process.env.MONGO_APPNAME || 'Cluster0';
 
 const SRV = useSrvFromEnv
