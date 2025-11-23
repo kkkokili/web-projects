@@ -1,4 +1,4 @@
 [build]
   base = "docs/frontend-widget-donation-progress-bar"
   command = "npm run build"
-  publish = "docs/frontend-widget-donation-progress-bar/build"
+  publish = "build"
