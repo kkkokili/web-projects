@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/web-projects/frontend-widget-donation-progress-bar/build/static/css/main.ccf0122a.css",
+    "main.js": "/web-projects/frontend-widget-donation-progress-bar/build/static/js/main.59086520.js",
+    "index.html": "/web-projects/frontend-widget-donation-progress-bar/build/index.html",
+    "main.ccf0122a.css.map": "/web-projects/frontend-widget-donation-progress-bar/build/static/css/main.ccf0122a.css.map",
+    "main.59086520.js.map": "/web-projects/frontend-widget-donation-progress-bar/build/static/js/main.59086520.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ccf0122a.css",
+    "static/js/main.59086520.js"
+  ]
+}
