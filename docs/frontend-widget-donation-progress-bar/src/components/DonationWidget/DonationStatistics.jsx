@@ -7,7 +7,7 @@ export default function DonationStatistics({ data, error }) {
       ) : (
         // ✅ 无错误 → 显示原本的 donation 信息
         <>
-          <p className='text-lg font-bold'>
+          <p className='text-3xl font-bold bg-red-500 text-white p-4'>
             {data.currency} {data.raised.toLocaleString()}
           </p>
           <p className='mb-5 text-xs mt-2'>
