@@ -27,7 +27,7 @@ export default function DonationWidget({ data, error }) {
 
     // 添加 animate → 开始动画
     ref.current.classList.add("animate");
-  }, [data.raised]);
+  }, [data.raised, data.goal]);
 
   return (
     //这边有碰到过组件在页面比较小的问题：因为收缩的是 里面那个 <section>（flex item），不是外面的 <div.App>,<section>：作为 flex item，默认 flex: 0 1 auto

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import donationWidgetConfig from "./config/donationWidgetConfig";
 
 function App() {
-  const { scale, showCenter } = donationWidgetConfig;
+  const { showCenter } = donationWidgetConfig;
   const [data, setData] = useState({
     goal: 1,
     raised: 0,
